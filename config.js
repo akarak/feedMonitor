@@ -5,7 +5,8 @@
  */
 module.exports = {
   port: 3000,
-  delay: 10,
+  polltime: 10,
+  timecount: 60,
   databaseURI : "localhost:27017/logger",
   collections : ["messages", "diffs"],
   feeds :  [

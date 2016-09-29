@@ -5,8 +5,8 @@ var config = require('./config.js');
 var mongojs = require("mongojs");
 var request = require('request');
 var xml2json = require("node-xml2json");
-var diff = require('rus-diff').diff
-
+// var diff = require('rus-diff').diff
+var diff = require('deep-diff');
 
 // console.log(diff(a, b))
 
@@ -17,6 +17,7 @@ var db = mongojs(databaseURI, collections);
 
 var feedNo = 1;
 var feed = config.feeds[1];
+var maxTime = config.timecount;
 var jsonObj;
 var jsonDiff;
 var jsonLast = [];
@@ -26,7 +27,7 @@ var quiet = true;
 var counter = 0;
 process.stdout.write('...starting');
 
-var myVar = setInterval(function(){ myTimer() }, 10000);
+var myVar = setInterval(function(){ myTimer() }, config.polltime * 1000);
 // jsonObj.time = getDateTime();
 
 //log2db(jsonObj);
@@ -35,7 +36,7 @@ function myTimer() {
     counter++;
     feedNo = 1 - feedNo;
     feed = config.feeds[feedNo];
-    if (counter == 6) {
+    if (counter == maxTime) {
         console.log(getDateTime());
         counter = 0;
     } else {
@@ -58,26 +59,36 @@ function myTimer() {
                 console.log("Status code: ", response.statusCode);
             } else {
        //         if (!quiet) console.log(body);
+                jsonObj = {};
                 if (feed.type == "xml") {
                     jsonObj = xml2json.parser( body );
                 } else {
                     jsonObj = JSON.parse(body);
                 }
                 jsonDiff = diff(jsonLast[feedNo], jsonObj);
-                jsonLast[feedNo] = jsonObj;
-
+                jsonLast[feedNo] =  JSON.parse(JSON.stringify(jsonObj));
+ 
     //            if (!quiet) console.log(jsonObj);
-                jsonObj.logTime = getDateTime();
-                log2db(jsonObj, quiet);
+
                 if (jsonDiff) {
-                    jsonDiff.logTime = getDateTime();
-                    log2diff(jsonDiff, quiet);
-                    console.log(feedNo, ":::", jsonDiff);
+                    var timeString = getDateTime().substring(11);
+                    console.log(timeString, ": ");
+
+                    jsonObj.logTime = getDateTime();
+                    log2db(jsonObj, quiet);
+                    
+                    var jsonLog = {};
+                    jsonLog.changes = jsonDiff;
+                    jsonLog.logTime = getDateTime();
+                    
+                    console.log(feedNo, ":::", JSON.stringify(jsonLog));
+                    log2diff(jsonLog, quiet);
+                   
                 }
             }
         }
     });
-}
+};
 
 // db.close();
 
@@ -134,5 +145,5 @@ function getDateTime() {
     month = (month < 10 ? "0" : "") + month;
     var day  = date.getDate();
     day = (day < 10 ? "0" : "") + day;
-    return year + ":" + month + ":" + day + ":" + hour + ":" + min + ":" + sec;
+    return day + "-" + month + "-" + year + " " + hour + ":" + min + ":" + sec;
 }
