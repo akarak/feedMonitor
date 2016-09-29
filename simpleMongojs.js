@@ -15,7 +15,10 @@ var databaseURI = config.databaseURI;
 var collections = config.collections;
 var db = mongojs(databaseURI, collections);
 
-var feedNo = 1;
+var feedsCount = config.feeds.length;
+var feedNo = feedsCount;    // so starts with first feed
+
+console.log("Tracking : ", feedsCount);
 var feed = config.feeds[1];
 var maxTime = config.timecount;
 var jsonObj;
@@ -23,6 +26,7 @@ var jsonDiff;
 var jsonLast = [];
 jsonLast[0] = {temp:"start"};
 jsonLast[1] = {temp:"start"};
+jsonLast[2] = {temp:"start"};
 var quiet = true;
 var counter = 0;
 process.stdout.write('...starting');
@@ -34,7 +38,8 @@ var myVar = setInterval(function(){ myTimer() }, config.polltime * 1000);
 
 function myTimer() {
     counter++;
-    feedNo = 1 - feedNo;
+    feedNo++;
+    if (feedNo >= feedsCount) feedNo = 0;
     feed = config.feeds[feedNo];
     if (counter == maxTime) {
         console.log(getDateTime());
@@ -75,12 +80,14 @@ function myTimer() {
                     console.log(timeString, ": ");
 
                     jsonObj.logTime = getDateTime();
+                    jsonObj.title = feed.title;
                     log2db(jsonObj, quiet);
                     
                     var jsonLog = {};
                     jsonLog.changes = jsonDiff;
                     jsonLog.logTime = getDateTime();
-                    
+                    jsonLog.title = feed.title;
+
                     console.log(feedNo, ":::", JSON.stringify(jsonLog));
                     log2diff(jsonLog, quiet);
                    
