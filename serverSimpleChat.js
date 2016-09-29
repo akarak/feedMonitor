@@ -8,7 +8,7 @@ var server = http.createServer(app);
 var io = require('socket.io').listen(server);
 
 app.get('/', function(req, res){
-  res.sendFile(__dirname + '/chat.html');
+  res.sendFile(__dirname + '/public/chat.html');
 });
 
 var PORT = process.env.PORT || config.port;

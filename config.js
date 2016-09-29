@@ -5,9 +5,11 @@
  */
 module.exports = {
   port: 3000,
-  feeds :  {
-        url: 'http://localhost:8080/data/rydercup.xml',
-        url2: 'http://scoring.mstworld.tv/content/rydercup.xml',
-        delay: 10
-    }
+  delay: 10,
+  databaseURI : "localhost:27017/logger",
+  collections : ["messages", "diffs"],
+  feeds :  [
+        { type: "xml", url: 'http://scoring.mstworld.tv/xml/rydercup.xml' },
+        { type: "json", url: 'http://uatd.365dm.com/api/score-centre/v1/golf/leaderboard/1484' }
+        ]
 };

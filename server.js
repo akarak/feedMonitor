@@ -28,13 +28,13 @@ var PORT = process.env.PORT || portNo;
         console.log("App now running on port", PORT);
     });
 
-io.sockets.on('connection', function (socket) {
-    socket.emit('news', { hello: 'world' });
-    socket.on('dataIn', function (data) {
-        console.log(data);
-/*
-Handle commands here...
-*/
+    io.sockets.on('connection', function (socket) {
+        socket.emit('news', { hello: 'world' });
+        socket.on('dataIn', function (data) {
+            console.log(data);
+        /*
+        Handle commands here...
+        */
+        });
     });
-});
 

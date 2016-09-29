@@ -6,7 +6,7 @@ The plan is to do,
 - add a set of urls to the database
 - log results to database
 - open socket server to show changes
-- simple web page to list the recent chhanges
+- simple web page to list the recent changes
 - compare feed timings
 
 Delete the Viz stuff...
