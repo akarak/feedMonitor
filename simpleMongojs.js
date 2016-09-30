@@ -46,6 +46,7 @@ function myTimer() {
         counter = 0;
     } else {
         process.stdout.write('.');
+        process.stdout.write(feed.title);
     }
     request({
         url: feed.url, //URL to hit

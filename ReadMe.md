@@ -9,8 +9,6 @@ The plan is to do,
 - simple web page to list the recent changes
 - compare feed timings
 
-Delete the Viz stuff...
-- Currently creates the Viz socket and web socket and just passes some pre set commands over.
 
 ??
 - Added tests for monitoring/redirecting a UDP stream and writing messages to mongodb
